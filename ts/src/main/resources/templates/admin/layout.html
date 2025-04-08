@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <a href="/admin/product/index" class="flex items-center text-gray-900 hover:text-gray-600">
+                        <span class="text-xl font-bold">Quản lý bán hàng</span>
+                    </a>
+                    
+                    <!-- Add Navigation Links -->
+                    <div class="ml-10 flex items-center space-x-4">
+                        <a href="/admin/product/index" class="text-gray-600 hover:text-gray-900">
+                            Sản phẩm
+                        </a>
+                        <a href="/admin/category/index" class="text-gray-600 hover:text-gray-900">
+                            Danh mục
+                        </a>
+                        <a href="/admin/account/index" class="text-gray-600 hover:text-gray-900">
+                            Tài khoản
+                        </a>
+                        <a href="/admin/order/index" class="text-gray-600 hover:text-gray-900">
+                            Đơn hàng
+                        </a>
+                        <a href="/admin/report/revenue" class="text-gray-600 hover:text-gray-900">
+                            Báo cáo
+                        </a>
+                        <a href="/admin/report/vip" class="text-gray-600 hover:text-gray-900">
+                            Khách hàng VIP
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Keep existing right nav with logout button -->
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-500" th:text="${session.username}"></span>
+                    <a href="/auth/logout" class="inline-flex items-center px-4 py-2 border border-transparent 
+                              text-sm font-medium rounded-xl text-white bg-gray-900 
+                              hover:bg-gray-800 transition-colors">
+                        Đăng xuất
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto py-6 sm:px-6 lg:px-8">
+        <div th:replace="${content}">
+            <!-- Content goes here -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-auto">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-gray-500">
+                © 2025 Tientvpd10102. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</body>
+</html> 

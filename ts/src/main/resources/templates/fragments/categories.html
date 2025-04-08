@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="categories">
+        <h2 class="text-xl font-semibold">Categories</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+            <a th:each="category : ${categories}" 
+               th:href="@{/product/list-by-category/{id}(id=${category.id})}"
+               class="p-4 bg-white shadow rounded text-center hover:bg-blue-100">
+                <span th:text="${category.name}"></span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

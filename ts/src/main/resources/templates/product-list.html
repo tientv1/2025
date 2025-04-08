@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+
+<head>
+    <title>Product List</title>
+</head>
+
+<body>
+    <section>
+        <div class="container mx-auto px-6">
+            <!-- Breadcrumb -->
+            <nav class="text-gray-600 mb-8" aria-label="Breadcrumb">
+                <ol class="list-none p-0 inline-flex">
+                    <li class="flex items-center">
+                        <a href="/" class="hover:text-gray-900">Home</a>
+                        <span class="mx-2">→</span>
+                    </li>
+                    <li class="text-gray-900">Sản phẩm</li>
+                </ol>
+            </nav>
+
+            <!-- Sort Options -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="mb-8 flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-900"
+                        th:text="${category != null ? category.name : 'Tất cả sản phẩm'}"></h2>
+                    <div class="flex items-center gap-3">
+                        <label for="sort" class="text-sm text-gray-600">Sắp xếp theo:</label>
+                        <select id="sort" onchange="sortProducts(this.value)" class="py-2 px-4 rounded-xl border border-gray-200 
+                                       text-gray-700 text-sm focus:outline-none 
+                                       focus:ring-2 focus:ring-gray-100 
+                                       focus:border-gray-300 cursor-pointer
+                                       hover:border-gray-300 transition-colors">
+                            <option value="name_asc" th:selected="${param.sort == null || param.sort[0] == 'name_asc'}">
+                                Tên A-Z</option>
+                            <option value="name_desc"
+                                th:selected="${param.sort != null && param.sort[0] == 'name_desc'}">Tên Z-A</option>
+                            <option value="price_asc"
+                                th:selected="${param.sort != null && param.sort[0] == 'price_asc'}">Giá thấp đến cao
+                            </option>
+                            <option value="price_desc"
+                                th:selected="${param.sort != null && param.sort[0] == 'price_desc'}">Giá cao đến thấp
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div th:each="product : ${products}" class="group">
+                    <div class="bg-white rounded-2xl overflow-hidden hover-up h-full">
+                        <!-- Image Container -->
+                        <div class="aspect-w-4 aspect-h-3 overflow-hidden">
+                            <img th:if="${product.image != null}" th:src="${product.image}" class="w-full h-[250px] object-cover transition-transform duration-700 
+                                        group-hover:scale-110" th:alt="${product.name}">
+                            <img th:if="${product.image == null}" src="/images/no-image.png" class="w-full h-[250px] object-cover transition-transform duration-700 
+                                        group-hover:scale-110" alt="No image available">
+                        </div>
+                        <!-- Product Info -->
+                        <div class="p-6">
+                            <div class="flex flex-col h-full">
+                                <h3 class="text-lg font-medium text-gray-900 mb-2 line-clamp-2 min-h-[3.5rem]"
+                                    th:text="${product.name}"></h3>
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="text-lg font-medium text-red-600"
+                                        th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                    </span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <a th:href="@{/product/detail/{id}(id=${product.id})}" class="flex-1 text-center py-3 border border-gray-200 
+                                              rounded-xl text-gray-600 hover:bg-gray-900 
+                                              hover:text-white hover:border-gray-900 
+                                              transition-all">
+                                        Xem chi tiết
+                                    </a>
+                                    <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post" class="flex-1">
+                                        <button type="submit" class="w-full text-center py-3 bg-gray-900 
+                                                rounded-xl text-white hover:bg-gray-800 
+                                                transition-all">
+                                            Thêm vào giỏ
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(products)}" class="text-center py-8">
+                <p class="text-gray-500">Không có sản phẩm nào trong danh mục này</p>
+            </div>
+        </div>
+    </section>
+
+    <script th:inline="javascript">
+        function sortProducts(sortType) {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('sort', sortType);
+            window.location.href = currentUrl.toString();
+        }
+
+        // Set selected option on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const sortSelect = document.getElementById('sort');
+            const params = new URLSearchParams(window.location.search);
+            const currentSort = params.get('sort') || 'name_asc';
+            sortSelect.value = currentSort;
+        });
+    </script>
+</body>
+
+</html>

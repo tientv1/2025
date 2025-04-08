@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{admin/layout :: layout(~{::section})}">
+
+<head>
+    <title>Báo cáo doanh thu</title>
+</head>
+
+<body>
+    <section>
+        <div class="p-8">
+            <h1 class="text-2xl font-bold mb-6">Báo cáo doanh thu</h1>
+
+            <!-- Thống kê tổng quan -->
+            <div class="grid grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <h3 class="text-gray-500 text-sm mb-2">Tổng doanh thu</h3>
+                    <p class="text-2xl font-bold text-gray-900" 
+                       th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                    </p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <h3 class="text-gray-500 text-sm mb-2">Tổng đơn hàng</h3>
+                    <p class="text-2xl font-bold text-gray-900" th:text="${totalOrders}"></p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <h3 class="text-gray-500 text-sm mb-2">Giá trị đơn hàng trung bình</h3>
+                    <p class="text-2xl font-bold text-gray-900"
+                       th:text="${#numbers.formatDecimal(avgOrderValue, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                    </p>
+                </div>
+            </div>
+
+            <!-- Biểu đồ doanh thu theo tháng -->
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <h3 class="text-lg font-medium mb-4">Doanh thu theo tháng</h3>
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script th:inline="javascript">
+            const monthlyRevenue = /*[[${monthlyRevenue}]]*/ {};
+            
+            new Chart(document.getElementById('revenueChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(monthlyRevenue),
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: Object.values(monthlyRevenue),
+                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+    </section>
+</body>
+</html> 

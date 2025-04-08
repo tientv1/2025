@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .hover-up {
+            transition: transform 0.3s ease;
+        }
+
+        .hover-up:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+    <title th:text="${title}">Shop Online</title>
+</head>
+
+<body class="min-h-screen flex flex-col">
+    <!-- Minimal & Modern Navigation -->
+    <nav class="fixed w-full z-50 glass-effect border-b border-gray-100">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-2xl font-bold text-gray-800 hover-up">
+                    ✨ tientvpd10102
+                </a>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-xl px-4">
+                    <form action="/search" method="get" class="relative">
+                        <input type="text" 
+                               name="keyword" 
+                               placeholder="Tìm kiếm sản phẩm..." 
+                               class="w-full py-2 pl-4 pr-10 rounded-xl border border-gray-200 
+                                      focus:outline-none focus:ring-2 focus:ring-gray-100 
+                                      focus:border-gray-300">
+                        <button type="submit" 
+                                class="absolute right-3 top-1/2 -translate-y-1/2">
+                            <svg xmlns="http://www.w3.org/2000/svg" 
+                                 class="h-5 w-5 text-gray-400" 
+                                 fill="none" viewBox="0 0 24 24" 
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="text-gray-600 hover:text-gray-900">
+                        Trang chủ
+                    </a>
+                    <!-- Cart with Counter -->
+                    <a th:href="@{/cart}" class="relative text-gray-600 hover:text-gray-900">
+                        Giỏ hàng
+                        <span th:if="${session.cart != null and !session.cart.isEmpty()}" 
+                              class="absolute -top-2 -right-2 bg-red-500 text-white text-xs 
+                                     font-bold rounded-full h-5 w-5 flex items-center justify-center"
+                              th:text="${session.cart.size()}">
+                        </span>
+                    </a>
+                    <!-- User Menu with Dropdown -->
+                    <div th:if="${session.username}" class="relative group">
+                        <button class="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+                            <span th:text="${session.username}"></span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="absolute right-0 w-48 py-2 mt-2 bg-white rounded-lg shadow-xl invisible 
+                                    group-hover:visible transition-all">
+                            <a th:href="@{/order/list}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                Đơn hàng của tôi
+                            </a>
+                            <a th:href="@{/account/edit-profile}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                Cập nhập thông tin
+                            </a>
+                            <a th:href="@{/account/change-password}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                Đổi mật khẩu
+                            </a>
+                            <a th:href="@{/auth/logout}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                Đăng xuất
+                            </a>
+                        </div>
+                    </div>
+                    <a th:unless="${session.username}" href="/auth/login" class="text-gray-600 hover:text-gray-900">
+                        Đăng nhập
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content with top padding for fixed nav -->
+    <main class="flex-grow pt-20">
+        <th:block th:replace="${content}"></th:block>
+    </main>
+
+    <!-- Simple & Elegant Footer -->
+    <footer class="bg-white border-t border-gray-100 py-12 mt-20">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-500">© 2025 Tientvpd10102. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

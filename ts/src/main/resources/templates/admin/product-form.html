@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: layout(~{::section})}">
+<section>
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold mb-6" th:text="${isEdit ? 'Sửa sản phẩm' : 'Tạo sản phẩm mới'}">
+            </h2>
+
+            <form th:action="${isEdit ? '/admin/product/update' : '/admin/product/create'}" th:object="${product}"
+                method="post" class="bg-white rounded-xl shadow-sm p-6 space-y-6" enctype="multipart/form-data">
+
+                <input type="hidden" th:field="*{id}" th:if="${isEdit}" th:value="${product.id}">
+
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tên sản phẩm
+                    </label>
+                    <input type="text" id="name" th:field="*{name}" th:value="${product.name}" required class="appearance-none rounded-xl relative block w-full px-4 py-3 
+                                border border-gray-200 placeholder-gray-400 text-gray-900 
+                                focus:outline-none focus:ring-2 focus:ring-blue-100 
+                                focus:border-blue-400 transition-all duration-200
+                                sm:text-sm">
+                </div>
+
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mô tả sản phẩm
+                    </label>
+                    <textarea id="description" th:field="*{description}" th:text="${product.description}" class="appearance-none rounded-xl relative block w-full px-4 py-3 
+                                    border border-gray-200 placeholder-gray-400 text-gray-900 
+                                    focus:outline-none focus:ring-2 focus:ring-blue-100 
+                                    focus:border-blue-400 transition-all duration-200
+                                    sm:text-sm" rows="4"></textarea>
+                </div>
+
+                <!-- Price -->
+                <div>
+                    <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
+                        Giá sản phẩm
+                    </label>
+                    <input type="number" 
+                           id="price" 
+                           name="price"
+                           th:value="${#numbers.formatInteger(product.price,0)}"
+                           required
+                           class="appearance-none rounded-xl relative block w-full px-4 py-3 
+                                  border border-gray-200 placeholder-gray-400 text-gray-900 
+                                  focus:outline-none focus:ring-2 focus:ring-blue-100 
+                                  focus:border-blue-400 transition-all duration-200
+                                  sm:text-sm">
+                </div>
+
+                <!-- Image Upload -->
+                <div>
+                    <label for="file" class="block text-sm font-medium text-gray-700 mb-2">
+                        Hình ảnh sản phẩm
+                    </label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 
+                                border-dashed rounded-xl hover:border-gray-400 transition-colors duration-200">
+                        <div class="space-y-3 text-center">
+                            <!-- Upload Icon -->
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
+                                viewBox="0 0 48 48" aria-hidden="true">
+                                <path
+                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+
+                            <!-- Selected file name -->
+                            <p th:if="${product.image}" class="text-sm text-gray-600">
+                                Ảnh hiện tại: <span class="font-medium" th:text="${product.image}"></span>
+                            </p>
+
+                            <!-- Upload Text -->
+                            <div class="flex text-sm justify-center">
+                                <label for="file" class="relative cursor-pointer rounded-md font-medium text-blue-600 
+                                            hover:text-blue-500 focus-within:outline-none focus-within:ring-2 
+                                            focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                    <span class="hover:underline">Chọn ảnh</span>
+                                    <input id="file" name="file" type="file" class="hidden" accept="image/*">
+                                </label>
+                                <p class="pl-1 text-gray-600">từ thiết bị của bạn</p>
+                            </div>
+                            <p class="text-xs text-gray-500">PNG, JPG, GIF (Tối đa 10MB)</p>
+                        </div>
+                    </div>
+                    <!-- Hidden input to keep original image when no new file is selected -->
+                    <input type="hidden" name="image" th:value="${product.image}">
+                </div>
+
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                        Danh mục
+                    </label>
+                    <select id="category" name="category.id" required class="appearance-none rounded-xl relative block w-full px-4 py-3 
+                                border border-gray-200 placeholder-gray-400 text-gray-900 
+                                focus:outline-none focus:ring-2 focus:ring-blue-100 
+                                focus:border-blue-400 transition-all duration-200
+                                sm:text-sm">
+                        <option value="">Chọn danh mục</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
+                            th:selected="${isEdit && product.category != null && 
+                                            product.category.id == category.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-4 pt-4">
+                    <a href="/admin/product/index" class="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 
+                            hover:bg-gray-50 transition-colors">
+                        Hủy bỏ
+                    </a>
+                    <button type="submit" class="px-4 py-2 border border-transparent text-sm font-medium 
+                                rounded-xl text-white bg-gray-900 hover:bg-gray-800 
+                                transition-colors">
+                        Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    function formatNumber(input) {
+        // Xóa tất cả dấu phẩy và ký tự không phải số
+        let value = input.value.replace(/[^\d]/g, '');
+
+        // Format số với dấu phẩy
+        value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+        // Cập nhật giá trị hiển thị
+        input.value = value;
+    }
+
+    // Xử lý trước khi submit form
+    document.querySelector('form').addEventListener('submit', function (e) {
+        let priceInput = document.getElementById('price');
+        // Xóa tất cả dấu phẩy trước khi submit
+        priceInput.value = priceInput.value.replace(/,/g, '');
+    });
+</script>
+
+</html>

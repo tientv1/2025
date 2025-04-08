@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+<section>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-2xl font-bold mb-6">Thanh toán đơn hàng</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Shipping Info -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Thông tin giao hàng</h3>
+                        <div class="space-y-4">
+                            <p><strong>Họ tên:</strong> <span th:text="${user.fullname}" class="text-gray-600"></span></p>
+                            <p><strong>Email:</strong> <span th:text="${user.email}" class="text-gray-600"></span></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Summary -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Tóm tắt đơn hàng</h3>
+                        <div class="space-y-4">
+                            <div th:each="entry : ${cart}" class="flex justify-between items-center">
+                                <span class="text-gray-600" th:text="${entry.key.name}"></span>
+                                <span class="text-gray-900 font-medium" 
+                                      th:text="${#numbers.formatDecimal(entry.value * entry.key.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                </span>
+                            </div>
+                            <div class="border-t pt-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Tổng cộng</span>
+                                    <span class="text-xl font-bold text-gray-900" 
+                                          th:text="${#numbers.formatDecimal(#aggregates.sum(cart.![key.price * value]), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Checkout Button -->
+                <form th:action="@{/order/checkout}" method="post" class="mt-8">
+                    <button type="submit" 
+                            class="w-full md:w-auto px-6 py-3 bg-gray-900 text-white rounded-xl 
+                                   hover:bg-gray-800 transition-all">
+                        Đặt hàng
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+</html> 

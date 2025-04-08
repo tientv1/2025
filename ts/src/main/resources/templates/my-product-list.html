@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::section})}">
+<section>
+    <div class="container mx-auto px-4 py-8">
+        <h2 class="text-2xl font-bold mb-6">My Purchased Products</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div th:each="detail : ${purchasedProducts}" 
+                 class="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+                <div class="p-4">
+                    <h3 class="font-medium" th:text="${detail.product.name}"></h3>
+                    <p class="text-sm text-gray-500 mt-2">
+                        Quantity: <span th:text="${detail.quantity}"></span>
+                    </p>
+                    <p class="text-sm text-gray-500">
+                        Price: <span th:text="'$' + ${detail.price}"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</html> 

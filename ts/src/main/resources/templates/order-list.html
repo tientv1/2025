@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::section})}">
+<section>
+    <div class="container mx-auto px-4 py-8">
+        <h2 class="text-2xl font-bold mb-6">Đơn hàng của tôi</h2>
+        <div class="space-y-4">
+            <div th:each="order : ${orders}" 
+                 class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-600">Đơn hàng #<span th:text="${order.id}"></span></p>
+                        <p class="text-sm text-gray-500" 
+                           th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy HH:mm')}"></p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span th:text="${order.status}" 
+                              class="px-3 py-1 rounded-full text-sm"
+                              th:classappend="${order.status == 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
+                                             (order.status == 'COMPLETED' ? 'bg-green-100 text-green-800' : 
+                                              'bg-gray-100 text-gray-800')}">
+                        </span>
+                        <a th:href="@{/order/detail/{id}(id=${order.id})}"
+                           class="text-blue-600 hover:text-blue-800">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</html> 

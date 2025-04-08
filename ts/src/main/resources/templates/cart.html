@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+
+<head>
+    <title>Shopping Cart</title>
+</head>
+
+<body>
+    <section>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-6">Giỏ hàng của bạn</h2>
+                    
+                    <div th:if="${session.cart == null or session.cart.isEmpty()}" 
+                         class="text-center py-8">
+                        <p class="text-gray-500">Giỏ hàng của bạn đang trống</p>
+                        <a href="/" class="inline-block mt-4 px-6 py-3 bg-gray-900 text-white rounded-xl 
+                                         hover:bg-gray-800 transition-colors">
+                            Tiếp tục mua sắm
+                        </a>
+                    </div>
+
+                    <div th:if="${session.cart != null and !session.cart.isEmpty()}" class="space-y-6">
+                        <!-- Product List -->
+                        <div class="border rounded-xl overflow-hidden">
+                            <div class="divide-y">
+                                <div th:each="item : ${session.cart}" class="p-6">
+                                    <div class="flex items-center gap-6">
+                                        <!-- Product Image -->
+                                        <img th:if="${item.key.image != null}" 
+                                             th:src="${item.key.image}"
+                                             class="w-24 h-24 rounded-xl object-cover">
+                                        
+                                        <!-- Product Info -->
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-medium text-gray-900 mb-2" 
+                                                th:text="${item.key.name}"></h3>
+                                            <p class="text-lg font-medium text-red-600" 
+                                               th:text="${#numbers.formatDecimal(item.key.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                            </p>
+                                        </div>
+
+                                        <!-- Quantity Control -->
+                                        <div class="flex items-center gap-4">
+                                            <div class="relative">
+                                                <select th:data-product-id="${item.key.id}"
+                                                        onchange="updateQuantity(this)"
+                                                        class="appearance-none w-20 py-2 pl-3 pr-8 rounded-xl 
+                                                               border border-gray-200 bg-white
+                                                               focus:outline-none focus:ring-2 
+                                                               focus:ring-gray-100 focus:border-gray-300
+                                                               cursor-pointer text-gray-700">
+                                                    <option th:each="i : ${#numbers.sequence(1, 10)}"
+                                                            th:value="${i}"
+                                                            th:text="${i}"
+                                                            th:selected="${i == item.value}">
+                                                    </option>
+                                                </select>
+                                                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Remove Button -->
+                                            <form th:action="@{|/cart/remove/${item.key.id}|}" method="post">
+                                                <button type="submit" class="text-red-600 hover:text-red-800">
+                                                    Xóa
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cart Summary -->
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-gray-600">Tổng tiền:</span>
+                                <span class="text-xl font-bold text-gray-900" 
+                                      th:text="${#numbers.formatDecimal(
+                                        #aggregates.sum(session.cart.entrySet().![key.price * value]), 
+                                        0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                </span>
+                            </div>
+                            <div class="flex gap-4">
+                                <button onclick="clearCart()" 
+                                        class="flex-1 py-3 border border-gray-200 rounded-xl 
+                                               text-gray-600 hover:bg-gray-900 hover:text-white 
+                                               hover:border-gray-900 transition-all">
+                                    Xóa giỏ hàng
+                                </button>
+                                <a href="/order/checkout" 
+                                   class="flex-1 text-center py-3 bg-gray-900 rounded-xl 
+                                          text-white hover:bg-gray-800 transition-all">
+                                    Thanh toán
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            function updateQuantity(select) {
+                const productId = select.getAttribute('data-product-id');
+                const quantity = select.value;
+                
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = /*[[@{/cart/update}]]*/ '/cart/update';
+
+                const productIdInput = document.createElement('input');
+                productIdInput.type = 'hidden';
+                productIdInput.name = 'productId';
+                productIdInput.value = productId;
+
+                const quantityInput = document.createElement('input');
+                quantityInput.type = 'hidden';
+                quantityInput.name = 'quantity';
+                quantityInput.value = quantity;
+
+                form.appendChild(productIdInput);
+                form.appendChild(quantityInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+
+            function removeItem(button) {
+                const productId = button.getAttribute('data-product-id');
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = /*[[@{/cart/remove/}]]*/ '/cart/remove/' + productId;
+                document.body.appendChild(form);
+                form.submit();
+            }
+
+            function clearCart() {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = /*[[@{/cart/clear}]]*/ '/cart/clear';
+                document.body.appendChild(form);
+                form.submit();
+            }
+        </script>
+    </section>
+</body>
+
+</html>

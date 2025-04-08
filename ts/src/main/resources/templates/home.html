@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+
+<head>
+    <title>Home</title>
+</head>
+
+<body>
+    <section>
+        <!-- Minimalist Hero -->
+        <div class="container mx-auto px-6">
+            <div class="py-20 text-center">
+                <h1 class="text-5xl font-bold text-gray-900 mb-6">
+                    Tientvpd10102 Shop
+                </h1>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Hãy đến với tientvpd10102 để khám phá những sản phẩm độc đáo nhất
+                </p>
+            </div>
+
+            <!-- Categories Section -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Danh mục sản phẩm</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    <a th:each="category : ${categories}" th:href="@{/product/list-by-category/{id}(id=${category.id})}"
+                        class="bg-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md
+                              text-center text-gray-700 hover:text-blue-600 
+                              transition-all duration-200">
+                        <span th:text="${category.name}" class="font-medium">Tên danh mục</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Sản phẩm nổi bật</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div th:each="product : ${products}" class="group">
+                        <div class="bg-white rounded-2xl overflow-hidden hover-up h-full">
+                            <!-- Image Container -->
+                            <div class="aspect-w-4 aspect-h-3 overflow-hidden">
+                                <img th:if="${product.image != null}" th:src="${product.image}" class="w-full h-[250px] object-cover transition-transform duration-700 
+                                            group-hover:scale-110" th:alt="${product.name}">
+                                <img th:if="${product.image == null}" src="/images/no-image.png" class="w-full h-[250px] object-cover transition-transform duration-700 
+                                            group-hover:scale-110" alt="No image available">
+                            </div>
+                            <!-- Product Info -->
+                            <div class="p-6">
+                                <div class="flex flex-col h-full">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2 line-clamp-2 min-h-[3.5rem]"
+                                        th:text="${product.name}"></h3>
+                                    <div class="flex justify-between items-center mb-4">
+                                        <span class="text-lg font-medium text-red-600"
+                                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                        </span>
+                                    </div>
+                                    <a th:href="@{/product/detail/{id}(id=${product.id})}" class="block w-full text-center py-3 border border-gray-200 
+                                              rounded-xl text-gray-600 hover:bg-gray-900 
+                                              hover:text-white hover:border-gray-900 
+                                              transition-all mt-auto">
+                                        Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Newsletter Section -->
+            <div class="bg-gray-50 rounded-3xl p-12 text-center mb-24">
+                <h2 class="text-2xl font-medium text-gray-900 mb-4">
+                    Đăng ký nhận tin
+                </h2>
+                <p class="text-gray-600 mb-6">
+                    Đăng ký để nhận thông tin sản phẩm mới và ưu đãi đặc biệt
+                </p>
+                <form class="max-w-md mx-auto flex gap-4">
+                    <input type="email" placeholder="Enter your email" class="flex-1 px-6 py-3 rounded-full border border-gray-200 
+                                  focus:outline-none focus:border-gray-900">
+                    <button class="px-8 py-3 bg-gray-900 text-white rounded-full 
+                                 hover:bg-gray-800 transition-colors hover-up">
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+
+            <!-- Sau phần hiển thị sản phẩm -->
+            <div class="mt-8 flex justify-center" th:if="${totalPages > 1}">
+                <nav class="flex items-center gap-2">
+                    <!-- Previous -->
+                    <a th:if="${currentPage > 0}" th:href="@{/home/index(page=${currentPage - 1})}"
+                        class="px-3 py-1 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                        &lt;
+                    </a>
+
+                    <!-- Page numbers -->
+                    <th:block th:with="start=${currentPage < 2 ? 0 : currentPage - 2},
+                              end=${totalPages - currentPage > 2 ? currentPage + 2 : totalPages - 1}">
+                        <th:block th:each="i : ${#numbers.sequence(start, end)}">
+                            <a th:href="@{/home/index(page=${i})}" th:class="${currentPage == i ? 
+                                         'px-3 py-1 bg-gray-900 text-white rounded-lg' : 
+                                         'px-3 py-1 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors'}"
+                                th:text="${i + 1}">
+                            </a>
+                        </th:block>
+                    </th:block>
+
+                    <!-- Next -->
+                    <a th:if="${currentPage < totalPages - 1}" th:href="@{/home/index(page=${currentPage + 1})}"
+                        class="px-3 py-1 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                        &gt;
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
