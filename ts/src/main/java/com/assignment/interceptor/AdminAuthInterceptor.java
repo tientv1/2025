@@ -7,7 +7,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 public class AdminAuthInterceptor implements HandlerInterceptor {
 
-    @SuppressWarnings("null")
     @Override
     public boolean preHandle(HttpServletRequest request,
             HttpServletResponse response,
