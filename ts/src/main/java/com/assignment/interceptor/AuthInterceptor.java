@@ -8,9 +8,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
-    public boolean preHandle(HttpServletRequest request,
-            HttpServletResponse response,
-            Object handler) throws Exception {
+    public boolean preHandle(@SuppressWarnings("null") HttpServletRequest request,
+            @SuppressWarnings("null") HttpServletResponse response,
+            @SuppressWarnings("null") Object handler) throws Exception {
 
         String requestURI = request.getRequestURI();
 
