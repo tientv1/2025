@@ -17,7 +17,7 @@ public class AccountController {
     private final UserService userService;
 
     @GetMapping("/sign-up")
-    public String signUpForm(Model model) {
+    public String signUpForm(Model model) { 
         model.addAttribute("user", new User());
         return "sign-up";
     }
